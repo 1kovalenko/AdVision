@@ -46,6 +46,8 @@ class ViewController: UIViewController {
         }
     }()
     
+    var anchors: [ARAnchor] = []
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,6 +143,10 @@ class ViewController: UIViewController {
             print("Classification: \"\(best.identifier)\" Confidence: \(best.confidence)")
         }
         
+        if let anchor = anchors.popLast() {
+            createSphere(by: anchor, name: best.identifier)
+        }
+        
         DispatchQueue.main.async { [unowned self] in
             self.labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
         }
@@ -188,13 +194,8 @@ class ViewController: UIViewController {
         imageView.addGestureRecognizer(tapRecongizer)
         imageView.isHidden = true
         
-        let blurEffect = UIBlurEffect(style: .light)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = labelView.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        labelView.addSubview(blurEffectView)
-        labelView.layer.cornerRadius = 8
+        labelView.layer.cornerRadius = 4
+        labelView.backgroundColor = UIColor(white: 0.9, alpha: 0.5)
         labelView.clipsToBounds = true
         labelView.isHidden = true
     }
@@ -218,6 +219,7 @@ class ViewController: UIViewController {
     
     func resetTrackingConfiguration() {
         let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .vertical
         
         let options: ARSession.RunOptions = [.resetTracking, .removeExistingAnchors]
         
@@ -238,16 +240,45 @@ class ViewController: UIViewController {
             print("Distance to target: \(result.distance)")
         }
         
-        let sphere = SCNSphere(radius: 0.0025)
-        let sphereNode = SCNNode(geometry: sphere)
+//        let sphere = SCNSphere(radius: 0.0025)
+//        let sphereNode = SCNNode(geometry: sphere)
         
         var translation = matrix_identity_float4x4
         translation.columns.3.z = -Float(result.distance)
         translation = matrix_multiply(currentFrame.camera.transform, translation)
         
-        sphereNode.simdTransform = translation
+//        sphereNode.simdTransform = translation
         
-        sceneView.scene.rootNode.addChildNode(sphereNode)
+        let anchor = ARAnchor(transform: translation)
+        anchors.append(anchor)
+        
+//        sceneView.scene.rootNode.addChildNode(sphereNode)
+    }
+    
+    func createSphere(by anchor: ARAnchor, name: String) {
+        let sphere = SCNSphere(radius: 0.025)
+        let sphereNode = SCNNode(geometry: sphere)
+        
+        let text = SCNText(string: name, extrusionDepth: 0.01)
+        text.font = UIFont.systemFont(ofSize: 1.0)
+        text.firstMaterial?.diffuse.contents = UIColor.orange
+        text.firstMaterial?.specular.contents = UIColor.white
+        text.firstMaterial?.isDoubleSided = true
+        text.chamferRadius = 0.01
+        
+        let (minBound, maxBound) = text.boundingBox
+        let textNode = SCNNode(geometry: text)
+        textNode.pivot = SCNMatrix4MakeTranslation( (maxBound.x - minBound.x)/2, minBound.y, 0.01/2)
+        let fontSize = Float(0.04)
+        textNode.scale = SCNVector3(x: fontSize, y: fontSize, z: fontSize)
+        
+        let parentNode = SCNNode()
+        parentNode.addChildNode(textNode)
+        parentNode.addChildNode(sphereNode)
+
+        parentNode.simdTransform = anchor.transform
+        
+        sceneView.scene.rootNode.addChildNode(parentNode)
     }
 }
 
