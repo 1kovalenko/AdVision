@@ -13,7 +13,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Getting_distance_in_AR" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="AdVision" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -41,32 +41,43 @@
                                 <rect key="frame" x="28" y="50" width="319" height="567"/>
                             </view>
                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZoG-Zq-Q6w">
-                                <rect key="frame" x="0.0" y="333.5" width="375" height="333.5"/>
+                                <rect key="frame" x="8" y="392" width="359" height="267"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jiw-Dj-Yx1">
+                                <rect key="frame" x="16" y="400" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <constraints>
                             <constraint firstItem="8xo-ii-Olq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="566-FS-Z9T"/>
-                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="centerX" secondItem="8xo-ii-Olq" secondAttribute="centerX" id="CDM-CO-kd7"/>
+                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="FDV-cR-AbC"/>
                             <constraint firstItem="x1u-5C-mqO" firstAttribute="centerX" secondItem="8xo-ii-Olq" secondAttribute="centerX" id="GVH-MH-wwy"/>
                             <constraint firstItem="x1u-5C-mqO" firstAttribute="height" secondItem="8xo-ii-Olq" secondAttribute="height" multiplier="0.85" id="HLb-wo-9z8"/>
-                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="height" secondItem="8xo-ii-Olq" secondAttribute="height" multiplier="0.5" id="Ist-uK-UCC"/>
                             <constraint firstItem="drx-6g-03f" firstAttribute="centerY" secondItem="8xo-ii-Olq" secondAttribute="centerY" id="JFP-fA-xDw"/>
-                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="bottom" secondItem="8xo-ii-Olq" secondAttribute="bottom" id="aNl-ib-eBX"/>
+                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="VMK-Qm-XDM"/>
+                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.4" id="WbI-ej-aO3"/>
+                            <constraint firstItem="jiw-Dj-Yx1" firstAttribute="top" secondItem="ZoG-Zq-Q6w" secondAttribute="top" constant="8" id="X47-sg-NFQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ZoG-Zq-Q6w" secondAttribute="bottom" constant="8" id="XOh-Pe-2Q2"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="8xo-ii-Olq" secondAttribute="bottom" id="bzS-8X-CTx"/>
+                            <constraint firstItem="jiw-Dj-Yx1" firstAttribute="leading" secondItem="ZoG-Zq-Q6w" secondAttribute="leading" constant="8" id="eHB-2Q-eKE"/>
+                            <constraint firstItem="jiw-Dj-Yx1" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="ZoG-Zq-Q6w" secondAttribute="trailing" constant="8" id="ebQ-z2-NxL"/>
                             <constraint firstItem="TmR-oZ-BoO" firstAttribute="centerY" secondItem="8xo-ii-Olq" secondAttribute="centerY" id="gn7-cH-vDg"/>
                             <constraint firstItem="x1u-5C-mqO" firstAttribute="centerY" secondItem="8xo-ii-Olq" secondAttribute="centerY" id="iMj-s2-dRq"/>
                             <constraint firstItem="drx-6g-03f" firstAttribute="centerX" secondItem="8xo-ii-Olq" secondAttribute="centerX" id="jJc-j8-ibN"/>
                             <constraint firstItem="TmR-oZ-BoO" firstAttribute="centerX" secondItem="8xo-ii-Olq" secondAttribute="centerX" id="oil-pI-7v4"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8xo-ii-Olq" secondAttribute="trailing" id="qoa-5e-ENv"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="top" secondItem="8xo-ii-Olq" secondAttribute="top" constant="20" id="ueB-x6-Iux"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZoG-Zq-Q6w" secondAttribute="trailing" constant="8" id="unR-F6-9hP"/>
                             <constraint firstItem="x1u-5C-mqO" firstAttribute="width" secondItem="8xo-ii-Olq" secondAttribute="width" multiplier="0.85" id="vsn-IU-B4w"/>
-                            <constraint firstItem="ZoG-Zq-Q6w" firstAttribute="width" secondItem="8xo-ii-Olq" secondAttribute="width" id="zdy-zO-jpR"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="horizView" destination="TmR-oZ-BoO" id="Vhr-1a-Ngc"/>
                         <outlet property="imageView" destination="ZoG-Zq-Q6w" id="4TY-MI-9EV"/>
+                        <outlet property="labelView" destination="jiw-Dj-Yx1" id="rOJ-VZ-tU7"/>
                         <outlet property="sceneView" destination="8xo-ii-Olq" id="JmR-XN-WSs"/>
                         <outlet property="squareView" destination="x1u-5C-mqO" id="ex7-xn-zZy"/>
                         <outlet property="vertView" destination="drx-6g-03f" id="SHC-b7-C2E"/>

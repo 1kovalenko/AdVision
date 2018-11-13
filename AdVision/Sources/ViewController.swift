@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var horizView: UIView!
     @IBOutlet weak var squareView: UIView!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var labelView: UILabel!
     
     // MARK: - Property
     var isDebuging: Bool = true {
@@ -31,7 +32,7 @@ class ViewController: UIViewController {
     
     lazy var rectanglesRequest: VNDetectRectanglesRequest = {
         let request = VNDetectRectanglesRequest(completionHandler: handleRectangles)
-        request.regionOfInterest = CGRect(x: 0.0, y: 0.0, width: 0.85, height: 0.85)
+        request.regionOfInterest = CGRect(x: 0.075, y: 0.075, width: 0.85, height: 0.85)
         
         return request
     }()
@@ -49,7 +50,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupImageView()
+        setupLabenAndImageView()
         setupSquareView()
         setupSceneView()
         
@@ -69,10 +70,7 @@ class ViewController: UIViewController {
     }
     
     // MARK: - Action
-    @objc func imageViewTapHandler() {
-        imageView.isHidden = true
-    }
-    
+    // MARK: Vision Handler
     func handleRectangles(request: VNRequest, error: Error?) {
         guard let observations = request.results as? [VNRectangleObservation] else {
             fatalError("unexpected result type from VNDetectRectanglesRequest")
@@ -110,13 +108,13 @@ class ViewController: UIViewController {
                     "inputBottomLeft": CIVector(cgPoint: bottomLeft),
                     "inputBottomRight": CIVector(cgPoint: bottomRight)
                     ])
-            
 
-            
-            // Show the pre-processed image
             DispatchQueue.main.async { [unowned self] in
                 self.imageView.image = UIImage(ciImage: correctedImage)
+                self.labelView.text = "Analyzing..."
+                
                 self.imageView.isHidden = false
+                self.labelView.isHidden = false
             }
             
             let handler = VNImageRequestHandler(ciImage: correctedImage)
@@ -130,40 +128,37 @@ class ViewController: UIViewController {
     }
     
     func handleClassification(request: VNRequest, error: Error?) {
+        
         guard let observations = request.results as? [VNClassificationObservation] else {
             fatalError("unexpected result type from VNCoreMLRequest")
         }
         
-        guard let best = observations.first
-            else { fatalError("can't get best result") }
+        guard let best = observations.first else {
+            fatalError("can't get best result")
+        }
         
-        print("Classification: \"\(best.identifier)\" Confidence: \(best.confidence)")
+        if isDebuging {
+            print("Classification: \"\(best.identifier)\" Confidence: \(best.confidence)")
+        }
+        
+        labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
     }
     
-    @objc func tapHandler(sender: UITapGestureRecognizer) {
+    // MARK: Gesture Recognizer Handler
+    @objc func imageViewTapHandler(sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else { return }
+        
+        imageView.isHidden = true
+        labelView.isHidden = true
+    }
+    
+    @objc func sceneTapHandler(sender: UITapGestureRecognizer) {
+        
+        guard sender.state == .ended else { return }
         
         guard let currentFrame = sceneView.session.currentFrame else { return }
         
-        //        let pointOnView = sender.location(in: sceneView).remaped(from: sceneView.frame.size, to: CGSize(width: 1.0, height: 1.0))
-        guard let result = sceneView.hitTest(CGPoint(x: 0.5, y: 0.5), types: [.existingPlaneUsingGeometry, .featurePoint]).first else { return }
-        
-        if isDebuging {
-            print(result.distance)
-            print(result.worldTransform)
-            print()
-        }
-        
-        
-        let sphere = SCNSphere(radius: 0.0025)
-        let sphereNode = SCNNode(geometry: sphere)
-        
-        var translation = matrix_identity_float4x4
-        translation.columns.3.z = -Float(result.distance)
-        translation = matrix_multiply(currentFrame.camera.transform, translation)
-
-        sphereNode.simdTransform = translation
-        
-        sceneView.scene.rootNode.addChildNode(sphereNode)
+        addSphereToScene()
         
         let handler = VNImageRequestHandler(cvPixelBuffer: currentFrame.capturedImage)
         DispatchQueue.global(qos: .userInteractive).async {
@@ -176,15 +171,22 @@ class ViewController: UIViewController {
     }
     
     @objc func changeDebuggingStatus(sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else { return }
+        
         isDebuging.toggle()
     }
     
     // MARK: - Method
-    fileprivate func setupImageView() {
+    fileprivate func setupLabenAndImageView() {
         let tapRecongizer = UITapGestureRecognizer(target: self, action: #selector(imageViewTapHandler))
         
+        imageView.layer.cornerRadius = 16
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = UIColor(white: 0.3, alpha: 0.8)
         imageView.addGestureRecognizer(tapRecongizer)
         imageView.isHidden = true
+        
+        labelView.isHidden = true
     }
     
     fileprivate func setupSquareView() {
@@ -195,7 +197,7 @@ class ViewController: UIViewController {
     }
     
     fileprivate func setupSceneView() {
-        let tapRecongizer = UITapGestureRecognizer(target: self, action: #selector(tapHandler(sender:)))
+        let tapRecongizer = UITapGestureRecognizer(target: self, action: #selector(sceneTapHandler(sender:)))
         let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(changeDebuggingStatus(sender:)))
         doubleTapRecognizer.numberOfTapsRequired = 2
         
@@ -217,6 +219,26 @@ class ViewController: UIViewController {
         horizView.isHidden = !showNeeded
     }
     
+    func addSphereToScene() {
+        guard let currentFrame = sceneView.session.currentFrame else { return }
+    
+        guard let result = sceneView.hitTest(CGPoint(x: 0.5, y: 0.5), types: [.existingPlaneUsingGeometry, .featurePoint]).first else { return }
+        
+        if isDebuging {
+            print("Distance to target: \(result.distance)")
+        }
+        
+        let sphere = SCNSphere(radius: 0.0025)
+        let sphereNode = SCNNode(geometry: sphere)
+        
+        var translation = matrix_identity_float4x4
+        translation.columns.3.z = -Float(result.distance)
+        translation = matrix_multiply(currentFrame.camera.transform, translation)
+        
+        sphereNode.simdTransform = translation
+        
+        sceneView.scene.rootNode.addChildNode(sphereNode)
+    }
 }
 
 extension ViewController: ARSCNViewDelegate {

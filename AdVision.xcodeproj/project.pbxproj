@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		998355B22199772600E396F3 /* Getting distance in AR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Getting distance in AR.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		998355B22199772600E396F3 /* AdVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		998355B52199772600E396F3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		998355B72199772600E396F3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		998355BA2199772600E396F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -42,7 +42,7 @@
 		998355A92199772600E396F3 = {
 			isa = PBXGroup;
 			children = (
-				998355B42199772600E396F3 /* Getting distance in AR */,
+				998355B42199772600E396F3 /* AdVision */,
 				998355B32199772600E396F3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,27 +50,26 @@
 		998355B32199772600E396F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				998355B22199772600E396F3 /* Getting distance in AR.app */,
+				998355B22199772600E396F3 /* AdVision.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		998355B42199772600E396F3 /* Getting distance in AR */ = {
+		998355B42199772600E396F3 /* AdVision */ = {
 			isa = PBXGroup;
 			children = (
 				998355C82199773900E396F3 /* Sources */,
 				998355C72199773200E396F3 /* Resources */,
 			);
-			path = "Getting distance in AR";
+			path = AdVision;
 			sourceTree = "<group>";
 		};
 		998355C72199773200E396F3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				99FF8FAB2199BCCB00CC98FD /* Storyboards */,
 				998355CC2199B82000E396F3 /* BannerClassifier.mlmodel */,
-				998355B92199772600E396F3 /* Main.storyboard */,
 				998355BC2199772800E396F3 /* Assets.xcassets */,
-				998355BE2199772800E396F3 /* LaunchScreen.storyboard */,
 				998355C12199772800E396F3 /* Info.plist */,
 			);
 			path = Resources;
@@ -86,12 +85,21 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		99FF8FAB2199BCCB00CC98FD /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				998355B92199772600E396F3 /* Main.storyboard */,
+				998355BE2199772800E396F3 /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		998355B12199772600E396F3 /* Getting distance in AR */ = {
+		998355B12199772600E396F3 /* AdVision */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 998355C42199772800E396F3 /* Build configuration list for PBXNativeTarget "Getting distance in AR" */;
+			buildConfigurationList = 998355C42199772800E396F3 /* Build configuration list for PBXNativeTarget "AdVision" */;
 			buildPhases = (
 				998355AE2199772600E396F3 /* Sources */,
 				998355AF2199772600E396F3 /* Frameworks */,
@@ -101,9 +109,9 @@
 			);
 			dependencies = (
 			);
-			name = "Getting distance in AR";
+			name = AdVision;
 			productName = "Getting distance in AR";
-			productReference = 998355B22199772600E396F3 /* Getting distance in AR.app */;
+			productReference = 998355B22199772600E396F3 /* AdVision.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +129,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 998355AD2199772600E396F3 /* Build configuration list for PBXProject "Getting distance in AR" */;
+			buildConfigurationList = 998355AD2199772600E396F3 /* Build configuration list for PBXProject "AdVision" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -134,7 +142,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				998355B12199772600E396F3 /* Getting distance in AR */,
+				998355B12199772600E396F3 /* AdVision */,
 			);
 		};
 /* End PBXProject section */
@@ -308,12 +316,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QJB3397G8M;
-				INFOPLIST_FILE = "$(SRCROOT)/Getting distance in AR/Resources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AdVision/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ru.kovalenko.Getting-distance-in-AR";
+				PRODUCT_BUNDLE_IDENTIFIER = ru.kovalenko.AdVision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -326,12 +334,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QJB3397G8M;
-				INFOPLIST_FILE = "$(SRCROOT)/Getting distance in AR/Resources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AdVision/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ru.kovalenko.Getting-distance-in-AR";
+				PRODUCT_BUNDLE_IDENTIFIER = ru.kovalenko.AdVision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -341,7 +349,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		998355AD2199772600E396F3 /* Build configuration list for PBXProject "Getting distance in AR" */ = {
+		998355AD2199772600E396F3 /* Build configuration list for PBXProject "AdVision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				998355C22199772800E396F3 /* Debug */,
@@ -350,7 +358,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		998355C42199772800E396F3 /* Build configuration list for PBXNativeTarget "Getting distance in AR" */ = {
+		998355C42199772800E396F3 /* Build configuration list for PBXNativeTarget "AdVision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				998355C52199772800E396F3 /* Debug */,
