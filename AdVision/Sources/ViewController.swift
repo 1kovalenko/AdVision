@@ -240,19 +240,12 @@ class ViewController: UIViewController {
             print("Distance to target: \(result.distance)")
         }
         
-//        let sphere = SCNSphere(radius: 0.0025)
-//        let sphereNode = SCNNode(geometry: sphere)
-        
         var translation = matrix_identity_float4x4
         translation.columns.3.z = -Float(result.distance)
         translation = matrix_multiply(currentFrame.camera.transform, translation)
         
-//        sphereNode.simdTransform = translation
-        
         let anchor = ARAnchor(transform: translation)
         anchors.append(anchor)
-        
-//        sceneView.scene.rootNode.addChildNode(sphereNode)
     }
     
     func createSphere(by anchor: ARAnchor, name: String) {
