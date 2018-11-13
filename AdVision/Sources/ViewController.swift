@@ -141,7 +141,9 @@ class ViewController: UIViewController {
             print("Classification: \"\(best.identifier)\" Confidence: \(best.confidence)")
         }
         
-        labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
+        DispatchQueue.main.async { [unowned self] in
+            self.labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
+        }
     }
     
     // MARK: Gesture Recognizer Handler
@@ -186,6 +188,14 @@ class ViewController: UIViewController {
         imageView.addGestureRecognizer(tapRecongizer)
         imageView.isHidden = true
         
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = labelView.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        labelView.addSubview(blurEffectView)
+        labelView.layer.cornerRadius = 8
+        labelView.clipsToBounds = true
         labelView.isHidden = true
     }
     
