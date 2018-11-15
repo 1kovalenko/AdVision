@@ -42,11 +42,12 @@ class ViewController: UIViewController {
             let model = try VNCoreMLModel(for: BannerClassifier().model)
             return VNCoreMLRequest(model: model, completionHandler: handleClassification)
         } catch {
-            fatalError("can't load Vision ML model: \(error)")
+            fatalError("Can't load Vision ML model: \(error)")
         }
     }()
     
     var anchors: [ARAnchor] = []
+    var referencedImages: Set<ARReferenceImage>? = Set<ARReferenceImage>()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -110,7 +111,19 @@ class ViewController: UIViewController {
                     "inputBottomLeft": CIVector(cgPoint: bottomLeft),
                     "inputBottomRight": CIVector(cgPoint: bottomRight)
                     ])
+                .oriented(.right)
 
+            
+            
+            
+            if let cgImage = correctedImage.convertToCGImage() {
+                referencedImages?.insert(ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2))
+                resetTrackingConfiguration()
+//                (sceneView.session.configuration as! ARWorldTrackingConfiguration).detectionImages = referencedImages
+                
+                print("Set updated")
+            }
+            
             DispatchQueue.main.async { [unowned self] in
                 self.imageView.image = UIImage(ciImage: correctedImage)
                 self.labelView.text = "Analyzing..."
@@ -219,7 +232,7 @@ class ViewController: UIViewController {
     
     func resetTrackingConfiguration() {
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .vertical
+        configuration.detectionImages = referencedImages
         
         let options: ARSession.RunOptions = [.resetTracking, .removeExistingAnchors]
         
@@ -276,5 +289,24 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ARSCNViewDelegate {
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        DispatchQueue.main.async {
+            print("Hey")
+            guard let imageAnchor = anchor as? ARImageAnchor else { return }
+            
+            let planeNode = self.getPlaneNode(withReferenceImage: imageAnchor.referenceImage)
+            planeNode.opacity = 1.0
+            planeNode.eulerAngles.x = -.pi / 2
+            
+            node.addChildNode(planeNode)
+        }
+    }
+    
+    func getPlaneNode(withReferenceImage image: ARReferenceImage) -> SCNNode {
+        let plane = SCNPlane(width: image.physicalSize.width, height: image.physicalSize.height)
+        let node = SCNNode(geometry: plane)
+        
+        return node
+    }
     
 }
