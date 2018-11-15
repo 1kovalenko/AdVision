@@ -47,13 +47,14 @@ class ViewController: UIViewController {
     }()
     
     var anchors: [ARAnchor] = []
-    var referencedImages: Set<ARReferenceImage>? = Set<ARReferenceImage>()
+    var referenceImagesSet: Set<ARReferenceImage>? = Set<ARReferenceImage>()
+    var referenceImagesStack: [ARReferenceImage] = []
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupLabenAndImageView()
+        setupLabelAndImageView()
         setupSquareView()
         setupSceneView()
         
@@ -112,14 +113,13 @@ class ViewController: UIViewController {
                     "inputBottomRight": CIVector(cgPoint: bottomRight)
                     ])
                 .oriented(.right)
-
-            
-            
             
             if let cgImage = correctedImage.convertToCGImage() {
-                referencedImages?.insert(ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2))
+                let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2)
+                referenceImagesStack.append(referenceImage)
+                
+                referenceImagesSet?.insert(referenceImage)
                 resetTrackingConfiguration()
-//                (sceneView.session.configuration as! ARWorldTrackingConfiguration).detectionImages = referencedImages
                 
                 print("Set updated")
             }
@@ -156,9 +156,14 @@ class ViewController: UIViewController {
             print("Classification: \"\(best.identifier)\" Confidence: \(best.confidence)")
         }
         
-        if let anchor = anchors.popLast() {
-            createSphere(by: anchor, name: best.identifier)
+        if let referenceImage = referenceImagesStack.popLast() {
+            referenceImage.name = (best.identifier)
+            referenceImagesSet?.update(with: referenceImage)
         }
+        
+//        if let anchor = anchors.popLast() {
+//            createSphere(by: anchor, name: best.identifier)
+//        }
         
         DispatchQueue.main.async { [unowned self] in
             self.labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
@@ -179,7 +184,7 @@ class ViewController: UIViewController {
         
         guard let currentFrame = sceneView.session.currentFrame else { return }
         
-        addSphereToScene()
+//        addSphereToScene()
         
         let handler = VNImageRequestHandler(cvPixelBuffer: currentFrame.capturedImage)
         DispatchQueue.global(qos: .userInteractive).async {
@@ -191,6 +196,15 @@ class ViewController: UIViewController {
         }
     }
     
+    @objc func clearScene(sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else { return }
+        
+        referenceImagesSet?.removeAll()
+        referenceImagesStack.removeAll()
+        
+        resetTrackingConfiguration()
+    }
+    
     @objc func changeDebuggingStatus(sender: UITapGestureRecognizer) {
         guard sender.state == .ended else { return }
         
@@ -198,7 +212,7 @@ class ViewController: UIViewController {
     }
     
     // MARK: - Method
-    fileprivate func setupLabenAndImageView() {
+    fileprivate func setupLabelAndImageView() {
         let tapRecongizer = UITapGestureRecognizer(target: self, action: #selector(imageViewTapHandler))
         
         imageView.layer.cornerRadius = 16
@@ -223,16 +237,19 @@ class ViewController: UIViewController {
     fileprivate func setupSceneView() {
         let tapRecongizer = UITapGestureRecognizer(target: self, action: #selector(sceneTapHandler(sender:)))
         let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(changeDebuggingStatus(sender:)))
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(clearScene(sender:)))
+        
         doubleTapRecognizer.numberOfTapsRequired = 2
         
         sceneView.addGestureRecognizer(tapRecongizer)
         sceneView.addGestureRecognizer(doubleTapRecognizer)
+        sceneView.addGestureRecognizer(longPressRecognizer)
         sceneView.delegate = self
     }
     
     func resetTrackingConfiguration() {
         let configuration = ARWorldTrackingConfiguration()
-        configuration.detectionImages = referencedImages
+        configuration.detectionImages = referenceImagesSet
         
         let options: ARSession.RunOptions = [.resetTracking, .removeExistingAnchors]
         
