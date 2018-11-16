@@ -33,7 +33,8 @@ class ViewController: UIViewController {
     lazy var rectanglesRequest: VNDetectRectanglesRequest = {
         let request = VNDetectRectanglesRequest(completionHandler: handleRectangles)
         request.regionOfInterest = CGRect(x: 0.075, y: 0.075, width: 0.85, height: 0.85)
-        
+        request.minimumConfidence = 0.7
+        request.maximumObservations = 0
         return request
     }()
     
@@ -88,12 +89,22 @@ class ViewController: UIViewController {
         guard let currentFrame = sceneView.session.currentFrame else { return }
         let inputImage = CIImage(cvPixelBuffer: currentFrame.capturedImage)
         
+        
+//        var presentedRectangles: [VNRectangleObservation] = []
         for detectedRectangle in observations {
             let imageSize = inputImage.extent.size
             
             // Verify detected rectangle is valid.
             let boundingBox = detectedRectangle.boundingBox.scaled(to: imageSize)
             
+            // MARK: TO-DO fix overlayering rectangles
+//            for presentedRectangle in presentedRectangles {
+//                guard !(presentedRectangle.topLeft.y < detectedRectangle.bottomRight.y) else {
+//
+//
+//                }
+//            }
+//
             guard inputImage.extent.contains(boundingBox) else {
                 print("invalid detected rectangle");
                 return
@@ -303,10 +314,10 @@ class ViewController: UIViewController {
         var linkString: String = ""
         let lowercasedImageName = imageName.lowercased()
         
-        if lowercasedImageName == "beeline" { linkString = "www.beeline.ru" }
-        if lowercasedImageName == "mtc"     { linkString = "www.mts.ru" }
-        if lowercasedImageName == "tele2"   { linkString = "www.tele2.ru" }
-        if lowercasedImageName == "megafon" { linkString = "www.megafon.ru" }
+        if lowercasedImageName == "beeline" { linkString = "https://www.beeline.ru" }
+        if lowercasedImageName == "mtc"     { linkString = "https://www.mts.ru" }
+        if lowercasedImageName == "tele2"   { linkString = "https://www.tele2.ru" }
+        if lowercasedImageName == "megafon" { linkString = "https://www.megafon.ru" }
         
         let url = URL(string: linkString)
         return url
@@ -332,7 +343,8 @@ extension ViewController: ARSCNViewDelegate {
         let node = SCNNode(geometry: plane)
         
         if let imageName = image.name, let url = getUrlFrom(imageName: imageName) {
-            let webView = getWebView(url: url)
+            let ratio = plane.width / plane.height
+            let webView = getWebView(url: url, with: ratio)
             
             plane.firstMaterial?.diffuse.contents = webView
             plane.firstMaterial?.isDoubleSided = true
@@ -341,11 +353,16 @@ extension ViewController: ARSCNViewDelegate {
         return node
     }
     
-    func getWebView(url: URL) -> UIWebView{
-        let webView = UIWebView()
+    func getWebView(url: URL, with ratio: CGFloat) -> UIWebView{
+        let height: CGFloat = 480
+        let width = height * ratio
+        let webView = UIWebView(frame: CGRect(x: 0, y: 0, width: width, height: height))
         let request = URLRequest(url: url)
         
-        webView.loadRequest(request)
+        DispatchQueue.main.async {
+            webView.loadRequest(request)
+        }
+        
         
         return webView
     }
