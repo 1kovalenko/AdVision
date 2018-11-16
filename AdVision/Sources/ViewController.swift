@@ -161,10 +161,6 @@ class ViewController: UIViewController {
             referenceImagesSet?.update(with: referenceImage)
         }
         
-//        if let anchor = anchors.popLast() {
-//            createSphere(by: anchor, name: best.identifier)
-//        }
-        
         DispatchQueue.main.async { [unowned self] in
             self.labelView.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
         }
@@ -183,8 +179,6 @@ class ViewController: UIViewController {
         guard sender.state == .ended else { return }
         
         guard let currentFrame = sceneView.session.currentFrame else { return }
-        
-//        addSphereToScene()
         
         let handler = VNImageRequestHandler(cvPixelBuffer: currentFrame.capturedImage)
         DispatchQueue.global(qos: .userInteractive).async {
@@ -303,6 +297,20 @@ class ViewController: UIViewController {
         
         sceneView.scene.rootNode.addChildNode(parentNode)
     }
+    
+    func getUrlFrom(imageName: String) -> URL? {
+        // MARK: TO-DO: flexible algrotihm
+        var linkString: String = ""
+        let lowercasedImageName = imageName.lowercased()
+        
+        if lowercasedImageName == "beeline" { linkString = "www.beeline.ru" }
+        if lowercasedImageName == "mtc"     { linkString = "www.mts.ru" }
+        if lowercasedImageName == "tele2"   { linkString = "www.tele2.ru" }
+        if lowercasedImageName == "megafon" { linkString = "www.megafon.ru" }
+        
+        let url = URL(string: linkString)
+        return url
+    }
 }
 
 extension ViewController: ARSCNViewDelegate {
@@ -323,7 +331,23 @@ extension ViewController: ARSCNViewDelegate {
         let plane = SCNPlane(width: image.physicalSize.width, height: image.physicalSize.height)
         let node = SCNNode(geometry: plane)
         
+        if let imageName = image.name, let url = getUrlFrom(imageName: imageName) {
+            let webView = getWebView(url: url)
+            
+            plane.firstMaterial?.diffuse.contents = webView
+            plane.firstMaterial?.isDoubleSided = true
+        }
+        
         return node
+    }
+    
+    func getWebView(url: URL) -> UIWebView{
+        let webView = UIWebView()
+        let request = URLRequest(url: url)
+        
+        webView.loadRequest(request)
+        
+        return webView
     }
     
 }
